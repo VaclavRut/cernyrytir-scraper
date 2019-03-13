@@ -130,6 +130,7 @@ Apify.main(async () => {
                     });
                 }
                 await enqueueItems(paginationUrls, requestQueue);
+                await Apify.pushData(await getCards($, request));
             } else if (request.userData.label === 'PAGE') {
                 // parse cards
                 await Apify.pushData(await getCards($, request));
