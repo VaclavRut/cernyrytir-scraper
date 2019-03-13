@@ -3,7 +3,7 @@ const requestPromise = require('request-fixed-tunnel-agent');
 const cheerio = require('cheerio');
 const moment = require('moment');
 const iconv = require('iconv-lite');
-const { getRandomInt } = require('./utils');
+const { getRandomInt, checkElement } = require('./utils');
 
 async function enqueueItems(items, requestQueue, priority) {
     if (items.length !== 0) {
@@ -25,20 +25,20 @@ function getCards($) {
     const table = $('table.kusovkytext').eq(1);
     table.find('tbody tr[bgcolor]:nth-child(3n)').each(function (index) {
         cards[index] = {};
-        cards[index].rarity = $(this).find('td[align="left"]').text();
-        cards[index].stockCount = $(this).find('td[align="center"]').eq(0).text();
-        cards[index].price = $(this).find('td[align="center"]').eq(1).text();
+        cards[index].rarity = checkElement($(this).find('td[align="left"]'));
+        cards[index].stockCount = checkElement($(this).find('td[align="center"]').eq(0))
+        cards[index].price = checkElement($(this).find('td[align="center"]').eq(1))
 
         const secondRow = $(this).prev('tr');
-        cards[index].edition = secondRow.find('td[align="left"]').text();
-        cards[index].cardType = secondRow.find('td[align="right"]').text();
+        cards[index].edition = checkElement(secondRow.find('td[align="left"]'))
+        cards[index].cardType = checkElement(secondRow.find('td[align="right"]'))
 
         const firstRow = secondRow.prev('tr');
 
-        cards[index].title = firstRow.find('div[title]').text().trim();
+        cards[index].title = checkElement(firstRow.find('div[title]'))
         cards[index].description = firstRow.find('div[title]').attr('title');
     });
-    console.log(cards);
+    // console.log(cards);
     return cards;
 }
 
@@ -46,23 +46,23 @@ Apify.main(async () => {
     const input = await Apify.getValue('INPUT');
     // const requestQueue = await Apify.openRequestQueue(`cernyRytir-${moment().format('YYYY-MM-DD')}`);
     const requestQueue = await Apify.openRequestQueue();
-
-    await requestQueue.addRequest(new Apify.Request({
-        url: 'http://cernyrytir.cz/index.php3?akce=3',
-        userData: {
-            label: 'START',
-        },
-    }));
-
-    // for testing, you can just skip enqueuing the whole listing and go to page directly
     /*
         await requestQueue.addRequest(new Apify.Request({
-            url: 'http://cernyrytir.cz/index.php3?akce=3&limit=0&edice_magic=RNA&poczob=30&triditpodle=ceny&hledej_pouze_magic=1&submit=Vyhledej',
+            url: 'http://cernyrytir.cz/index.php3?akce=3',
             userData: {
-                label: 'PAGE',
+                label: 'START',
             },
         }));
     */
+        // for testing, you can just skip enqueuing the whole listing and go to page directly
+
+            await requestQueue.addRequest(new Apify.Request({
+                url: 'http://cernyrytir.cz/index.php3?akce=3&limit=0&edice_magic=RNA&poczob=30&triditpodle=ceny&hledej_pouze_magic=1&submit=Vyhledej',
+                userData: {
+                    label: 'PAGE',
+                },
+            }));
+
     const crawler = new Apify.BasicCrawler({
         requestQueue,
         retireInstanceAfterRequestCount: 1,

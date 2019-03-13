@@ -4,4 +4,12 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports = { getRandomInt };
+function checkElement(element){
+    if(element.length !== 0){
+        return element.text().trim()
+    }else{
+        return null
+    }
+}
+
+module.exports = { getRandomInt, checkElement };
