@@ -46,23 +46,23 @@ Apify.main(async () => {
     const input = await Apify.getValue('INPUT');
     // const requestQueue = await Apify.openRequestQueue(`cernyRytir-${moment().format('YYYY-MM-DD')}`);
     const requestQueue = await Apify.openRequestQueue();
-    /*
+
         await requestQueue.addRequest(new Apify.Request({
             url: 'http://cernyrytir.cz/index.php3?akce=3',
             userData: {
                 label: 'START',
             },
         }));
-    */
-        // for testing, you can just skip enqueuing the whole listing and go to page directly
+    /*
+     // for testing, you can just skip enqueuing the whole listing and go to page directly
 
-            await requestQueue.addRequest(new Apify.Request({
-                url: 'http://cernyrytir.cz/index.php3?akce=3&limit=0&edice_magic=RNA&poczob=30&triditpodle=ceny&hledej_pouze_magic=1&submit=Vyhledej',
-                userData: {
-                    label: 'PAGE',
-                },
-            }));
-
+         await requestQueue.addRequest(new Apify.Request({
+             url: 'http://cernyrytir.cz/index.php3?akce=3&limit=0&edice_magic=RNA&poczob=30&triditpodle=ceny&hledej_pouze_magic=1&submit=Vyhledej',
+             userData: {
+                 label: 'PAGE',
+             },
+         }));
+     */
     const crawler = new Apify.BasicCrawler({
         requestQueue,
         retireInstanceAfterRequestCount: 1,
