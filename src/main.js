@@ -26,17 +26,19 @@ function getCards($) {
     table.find('tbody tr[bgcolor]:nth-child(3n)').each(function (index) {
         cards[index] = {};
         cards[index].rarity = checkElement($(this).find('td[align="left"]'));
-        cards[index].stockCount = checkElement($(this).find('td[align="center"]').eq(0))
-        cards[index].price = checkElement($(this).find('td[align="center"]').eq(1))
-
+        cards[index].stockCount = checkElement($(this).find('td[align="center"]').eq(0));
+        cards[index].stockCountParsed = cards[index].stockCount ? parseInt(cards[index].stockCount) : null;
+        cards[index].price = checkElement($(this).find('td[align="center"]').eq(1));
+        cards[index].priceParsed = cards[index].price ? parseFloat(cards[index].price) : null;
         const secondRow = $(this).prev('tr');
-        cards[index].edition = checkElement(secondRow.find('td[align="left"]'))
-        cards[index].cardType = checkElement(secondRow.find('td[align="right"]'))
+        cards[index].edition = checkElement(secondRow.find('td[align="left"]'));
+        cards[index].cardType = checkElement(secondRow.find('td[align="right"]'));
 
         const firstRow = secondRow.prev('tr');
 
-        cards[index].title = checkElement(firstRow.find('div[title]'))
+        cards[index].title = checkElement(firstRow.find('div[title]'));
         cards[index].description = firstRow.find('div[title]').attr('title');
+        cards[index].dateVisited = moment().format('YYYY-MM-DDTHH:mm:ss');
     });
     // console.log(cards);
     return cards;
@@ -47,12 +49,12 @@ Apify.main(async () => {
     // const requestQueue = await Apify.openRequestQueue(`cernyRytir-${moment().format('YYYY-MM-DD')}`);
     const requestQueue = await Apify.openRequestQueue();
 
-        await requestQueue.addRequest(new Apify.Request({
-            url: 'http://cernyrytir.cz/index.php3?akce=3',
-            userData: {
-                label: 'START',
-            },
-        }));
+    await requestQueue.addRequest(new Apify.Request({
+        url: 'http://cernyrytir.cz/index.php3?akce=3',
+        userData: {
+            label: 'START',
+        },
+    }));
     /*
      // for testing, you can just skip enqueuing the whole listing and go to page directly
 
@@ -105,7 +107,7 @@ Apify.main(async () => {
                 // console.log($('table.kusovkytext').eq(1).html())
                 $('table.kusovkytext').eq(1).find('td a').each(function () {
                     const categoryUrl = `http://cernyrytir.cz/${$(this).attr('href')}`;
-                    console.log(categoryUrl)
+                    console.log(categoryUrl);
                     categoryLinks.push({
                         url: categoryUrl,
                         userData: {
