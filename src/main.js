@@ -67,7 +67,7 @@ Apify.main(async () => {
         requestQueue,
         retireInstanceAfterRequestCount: 1,
         maxRequestRetries: input.maxRetries || 5,
-        maxConcurrency: input.maxConcurrency || 15,
+        maxConcurrency: input.maxConcurrency || 5,
         autoscaledPoolOptions: {
             systemStatusOptions: {
                 maxEventLoopOverloadedRatio: 0.7,
