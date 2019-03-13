@@ -27,7 +27,7 @@ function getCards($) {
         cards[index] = {};
         cards[index].rarity = checkElement($(this).find('td[align="left"]'));
         cards[index].stockCount = checkElement($(this).find('td[align="center"]').eq(0));
-        cards[index].stockCountParsed = cards[index].stockCount ? parseInt(cards[index].stockCount) : null;
+        cards[index].stockCountParsed = cards[index].stockCount ? parseInt(cards[index].stockCount, 10) : null;
         cards[index].price = checkElement($(this).find('td[align="center"]').eq(1));
         cards[index].priceParsed = cards[index].price ? parseFloat(cards[index].price) : null;
         const secondRow = $(this).prev('tr');
@@ -121,7 +121,7 @@ Apify.main(async () => {
                 const paginationUrl = $('span.kusovkytext').eq(0).find('a').eq(0)
                     .attr('href');
                 const paginationUrls = [];
-                const cardCount = Math.ceil(parseInt($('span.kusovkytext').eq(0).text().match(/\d+/)) / 30) * 30;
+                const cardCount = Math.ceil(parseInt($('span.kusovkytext').eq(0).text().match(/\d+/), 10) / 30) * 30;
                 for (let i = 30; i <= cardCount; i += 30) {
                     const paginationParam = `limit=${i}`;
                     paginationUrls.push({
