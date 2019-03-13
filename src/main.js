@@ -90,7 +90,7 @@ Apify.main(async () => {
 
             const { body, statusCode } = response;
             const decodedBody = iconv.decode(body, 'cp1250');
-            const $ = cheerio.load(body);
+            const $ = cheerio.load(decodedBody);
             $.find = $;
 
             if (statusCode !== 200) {
