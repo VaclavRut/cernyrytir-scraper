@@ -123,7 +123,7 @@ Apify.main(async () => {
                 for (let i = 30; i <= cardCount; i += 30) {
                     const paginationParam = `limit=${i}`;
                     paginationUrls.push({
-                        url: paginationUrl.replace(/limit=\d+/, paginationParam),
+                        url: `http://cernyrytir.cz/${paginationUrl.replace(/limit=\d+/, paginationParam)}`,
                         userData: {
                             label: 'PAGE',
                         },
