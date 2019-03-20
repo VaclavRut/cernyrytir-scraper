@@ -3,6 +3,9 @@ const requestPromise = require('request-fixed-tunnel-agent');
 const cheerio = require('cheerio');
 const moment = require('moment');
 const iconv = require('iconv-lite');
+const md5 = require('md5')
+
+// Imports
 const { getRandomInt, checkElement } = require('./utils');
 
 async function enqueueItems(items, requestQueue, priority) {
@@ -39,14 +42,13 @@ function getCards($) {
         cards[index].title = checkElement(firstRow.find('div[title]'));
         cards[index].description = firstRow.find('div[title]').attr('title');
         cards[index].dateVisited = moment().format('YYYY-MM-DDTHH:mm:ss');
+        cards[index].uniqueId = md5(cards[index].rarity + cards[index].edition + cards[index].title);
     });
-    // console.log(cards);
     return cards;
 }
 
 Apify.main(async () => {
     const input = await Apify.getValue('INPUT');
-    // const requestQueue = await Apify.openRequestQueue(`cernyRytir-${moment().format('YYYY-MM-DD')}`);
     const requestQueue = await Apify.openRequestQueue();
 
     await requestQueue.addRequest(new Apify.Request({
@@ -82,7 +84,7 @@ Apify.main(async () => {
 
             const response = await requestPromise({
                 url: request.url,
-                // proxy: Apify.getApifyProxyUrl(),
+                proxy: Apify.getApifyProxyUrl(),
                 headers: {
                     'User-Agent': Apify.utils.getRandomUserAgent(),
                 },
@@ -103,8 +105,6 @@ Apify.main(async () => {
             if (request.userData.label === 'START') {
                 // get initial set of categories
                 const categoryLinks = [];
-                // await Apify.setValue('page.html',$('table').html())
-                // console.log($('table.kusovkytext').eq(1).html())
                 $('table.kusovkytext').eq(1).find('td a').each(function () {
                     const categoryUrl = `http://cernyrytir.cz/${$(this).attr('href')}`;
                     console.log(categoryUrl);
@@ -132,6 +132,7 @@ Apify.main(async () => {
                     });
                 }
                 await enqueueItems(paginationUrls, requestQueue);
+                // parse cards
                 await Apify.pushData(await getCards($, request));
             } else if (request.userData.label === 'PAGE') {
                 // parse cards
